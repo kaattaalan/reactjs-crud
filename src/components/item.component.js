@@ -1,196 +1,110 @@
-import React, { Component } from "react";
-import TutorialDataService from "../services/item.service";
+import { Component } from "react";
+import Modal from 'react-bootstrap/Modal'
+import ItemService from '../services/item.service'
 
-export default class Tutorial extends Component {
-    constructor(props) {
-        super(props);
-        this.onChangeTitle = this.onChangeTitle.bind(this);
-        this.onChangeDescription = this.onChangeDescription.bind(this);
-        this.getTutorial = this.getTutorial.bind(this);
-        this.updatePublished = this.updatePublished.bind(this);
-        this.updateTutorial = this.updateTutorial.bind(this);
-        this.deleteTutorial = this.deleteTutorial.bind(this);
-
-        this.state = {
-            currentTutorial: {
-                id: null,
-                title: "",
-                description: "",
-                published: false
-            },
-            message: ""
-        };
+export default class ItemDialogue extends Component{
+  constructor(props){
+    super(props);
+    this.getItem = this.getItem.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.saveItem = this.saveItem.bind(this);
+    this.state = {
+      activeItem : undefined,
+      title : "",
+      description : "",
+      itemId : ""
     }
+  }
 
-    componentDidMount() {
-        this.getTutorial(this.props.match.params.id);
-    }
+  //single method to enable both set and reset functions.
+  fillState(response){
+    this.setState({
+      activeItem: response && response.data ? response.data : undefined,
+      itemId : response && response.data && response.data.id ? response.data.id : "",
+      title: response && response.data && response.data.title ? response.data.title : "",
+      description: response && response.data && response.data.description ? response.data.description : ""
+    })
+  }
 
-    onChangeTitle(e) {
-        const title = e.target.value;
+  populateForm(itemId){
+    this.getItem(itemId);
+  }
 
-        this.setState(function(prevState) {
-            return {
-                currentTutorial: {
-                    ...prevState.currentTutorial,
-                    title: title
-                }
-            };
-        });
-    }
+  getItem(id) {
+    ItemService.get(id)
+      .then(response => {
+        this.fillState(response)
+        console.info(response.data);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
 
-    onChangeDescription(e) {
-        const description = e.target.value;
+  //single handler for all onChange of input fields
+  handleChange(evt) {
+    const value = evt.target.type === "checkbox" ? evt.target.checked : evt.target.value;
+    this.setState({
+      ...this.state,
+      [evt.target.name]: value
+    });
+  }
 
-        this.setState(prevState => ({
-            currentTutorial: {
-                ...prevState.currentTutorial,
-                description: description
-            }
-        }));
-    }
+  saveItem(){
+    console.info('Item Saved')
+    ItemService.create({
+      title : this.state.title,
+      description : this.state.description
+    })
+  }
 
-    getTutorial(id) {
-        TutorialDataService.get(id)
-            .then(response => {
-                this.setState({
-                    currentTutorial: response.data
-                });
-                console.log(response.data);
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    }
-
-    updatePublished(status) {
-        var data = {
-            id: this.state.currentTutorial._id,
-            title: this.state.currentTutorial.title,
-            description: this.state.currentTutorial.description,
-            published: status
-        };
-
-        TutorialDataService.update(this.state.currentTutorial._id, data)
-            .then(response => {
-                this.setState(prevState => ({
-                    currentTutorial: {
-                        ...prevState.currentTutorial,
-                        published: status
-                    }
-                }));
-                console.log(response.data);
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    }
-
-    updateTutorial() {
-        TutorialDataService.update(
-                this.state.currentTutorial._id,
-                this.state.currentTutorial
-            )
-            .then(response => {
-                console.log(response.data);
-                this.setState({
-                    message: "The tutorial was updated successfully!"
-                });
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    }
-
-    deleteTutorial() {
-        TutorialDataService.delete(this.state.currentTutorial._id)
-            .then(response => {
-                console.log(response.data);
-                this.props.history.push('/tutorials')
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    }
-
-    render() {
-        
-    const { currentTutorial } = this.state;
-
-    return (
-      <div>
-        {currentTutorial ? (
-          <div className="edit-form">
-            <h4>Tutorial</h4>
-            <form>
-              <div className="form-group">
+    render(){
+        //item dialogue goes here
+        return(
+            <Modal 
+            show={this.props.show} 
+            onHide={this.props.handleClose}
+            centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <div className="submit-form">
+          <div className="form-group">
                 <label htmlFor="title">Title</label>
                 <input
                   type="text"
                   className="form-control"
                   id="title"
-                  value={currentTutorial.title}
-                  onChange={this.onChangeTitle}
+                  required
+                  value={this.state.title}
+                  onChange={this.handleChange}
+                  name="title"
                 />
               </div>
-              <div className="form-group">
+          <div className="form-group">
                 <label htmlFor="description">Description</label>
                 <input
                   type="text"
                   className="form-control"
                   id="description"
-                  value={currentTutorial.description}
-                  onChange={this.onChangeDescription}
+                  value={this.state.description}
+                  onChange={this.handleChange}
+                  name="description"
                 />
-              </div>
-
-              <div className="form-group">
-                <label>
-                  <strong>Status:</strong>
-                </label>
-                {currentTutorial.published ? "Published" : "Pending"}
-              </div>
-            </form>
-
-            {currentTutorial.published ? (
-              <button
-                className="badge badge-primary mr-2"
-                onClick={() => this.updatePublished(false)}
-              >
-                UnPublish
-              </button>
-            ) : (
-              <button
-                className="badge badge-primary mr-2"
-                onClick={() => this.updatePublished(true)}
-              >
-                Publish
-              </button>
-            )}
-
-            <button
-              className="badge badge-danger mr-2"
-              onClick={this.deleteTutorial}
-            >
-              Delete
-            </button>
-
-            <button
-              type="submit"
-              className="badge badge-success"
-              onClick={this.updateTutorial}
-            >
-              Update
-            </button>
-            <p>{this.state.message}</p>
+              </div>    
           </div>
-        ) : (
-          <div>
-            <br />
-            <p>Please click on an Item...</p>
-          </div>
-        )}
-      </div>
-    );
+          </Modal.Body>
+        <Modal.Footer>
+          <button onClick={() => {this.props.handleClose();}} className="m-3 btn btn-sm btn-outline-danger">
+            Close
+          </button>
+          <button onClick={() => {this.saveItem(); this.props.loadList(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-primary">
+            Save
+          </button>
+        </Modal.Footer>
+      </Modal>
+        )
     }
+      
 }

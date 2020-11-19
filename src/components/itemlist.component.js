@@ -1,177 +1,98 @@
 import React, { Component } from "react";
-import TutorialDataService from "../services/item.service";
-import { Link } from "react-router-dom";
+import ItemService from "../services/item.service";
 
-export default class TutorialsList extends Component {
+import ItemDialogue from './item.component'
+
+export default class ItemList extends Component {
     constructor(props) {
         super(props);
-        this.onChangeSearchTitle = this.onChangeSearchTitle.bind(this);
-        this.retrieveTutorials = this.retrieveTutorials.bind(this);
-        this.refreshList = this.refreshList.bind(this);
-        this.setActiveTutorial = this.setActiveTutorial.bind(this);
-        this.removeAllTutorials = this.removeAllTutorials.bind(this);
-        this.searchTitle = this.searchTitle.bind(this);
-
+        this.getItemList = this.getItemList.bind(this);
+        this.removeAllItems = this.removeAllItems.bind(this);
+        this.showEditItemDialogue = this.showEditItemDialogue.bind(this);
         this.state = {
-            tutorials: [],
-            currentTutorial: null,
-            currentIndex: -1,
-            searchTitle: ""
+            items: []
         };
     }
 
+      //will fetch the list of items after the component has been loaded
     componentDidMount() {
-        this.retrieveTutorials();
+        this.getItemList();
     }
 
-    onChangeSearchTitle(e) {
-        const searchTitle = e.target.value;
-
-        this.setState({
-            searchTitle: searchTitle
-        });
-    }
-
-    retrieveTutorials() {
-        TutorialDataService.getAll()
+    //fetch list from API
+    getItemList() {
+      ItemService.getAll()
+          .then(response => {
+              this.setState({
+                items: response.data
+              });
+              console.info(response.data);
+          })
+          .catch(e => {
+              console.log(e);
+          });
+  }
+    //remove All items
+    removeAllItems() {
+        ItemService.deleteAll()
             .then(response => {
-                this.setState({
-                    tutorials: response.data
-                });
-                console.log(response.data);
+                console.info(response.data);
+                this.getItemList();
             })
             .catch(e => {
                 console.log(e);
             });
     }
 
-    refreshList() {
-        this.retrieveTutorials();
-        this.setState({
-            currentTutorial: null,
-            currentIndex: -1
-        });
-    }
+    showNewItemDialogue = () => {
+      this.setState({ showItem: true , activeItemId: undefined});
+    };
 
-    setActiveTutorial(tutorial, index) {
-        this.setState({
-            currentTutorial: tutorial,
-            currentIndex: index
-        });
-    }
-
-    removeAllTutorials() {
-        TutorialDataService.deleteAll()
-            .then(response => {
-                console.log(response.data);
-                this.refreshList();
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    }
-
-    searchTitle() {
-        TutorialDataService.findByTitle(this.state.searchTitle)
-            .then(response => {
-                this.setState({
-                    tutorials: response.data
-                });
-                console.log(response.data);
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    }
+    showEditItemDialogue = (itemID) => {
+      this.setState({ showItem: true , activeItemId: itemID})
+    };
+  
+    hideItemDialogue = () => {
+      this.setState({ showItem: false });
+    };
+  
 
     render() {
-        
-    const { searchTitle, tutorials, currentTutorial, currentIndex } = this.state;
+    const { items } = this.state;
 
     return (
       <div className="list row">
-        <div className="col-md-8">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search by title"
-              value={searchTitle}
-              onChange={this.onChangeSearchTitle}
-            />
-            <div className="input-group-append">
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={this.searchTitle}
-              >
-                Search
-              </button>
-            </div>
-          </div>
-        </div>
         <div className="col-md-6">
           <h4>Item List</h4>
 
           <ul className="list-group">
-            {tutorials &&
-              tutorials.map((tutorial, index) => (
+            {items &&
+              items.map((item, index) => (
                 <li
-                  className={
-                    "list-group-item " +
-                    (index === currentIndex ? "active" : "")
-                  }
-                  onClick={() => this.setActiveTutorial(tutorial, index)}
+                  className= "list-group-item "
                   key={index}
+                  onClick={() => {this.showEditItemDialogue(item.id); }}
                 >
-                  {tutorial.title}
+                  {item.title}
                 </li>
               ))}
           </ul>
-
+        <ItemDialogue show={this.state.showItem} 
+                      handleClose={this.hideItemDialogue} 
+                      itemId={this.state.activeItemId} 
+                      loadList={this.getItemList}/>
+          <button
+            className="m-3 btn btn-sm btn-outline-success"
+            onClick={() => {this.showNewItemDialogue(); }}
+          >
+            Add
+          </button>
           <button
             className="m-3 btn btn-sm btn-danger"
-            onClick={this.removeAllTutorials}
+            onClick={this.removeAllItems}
           >
             Remove All
           </button>
-        </div>
-        <div className="col-md-6">
-          {currentTutorial ? (
-            <div>
-              <h4>Tutorial</h4>
-              <div>
-                <label>
-                  <strong>Title:</strong>
-                </label>{" "}
-                {currentTutorial.title}
-              </div>
-              <div>
-                <label>
-                  <strong>Description:</strong>
-                </label>{" "}
-                {currentTutorial.description}
-              </div>
-              <div>
-                <label>
-                  <strong>Status:</strong>
-                </label>{" "}
-                {currentTutorial.published ? "Published" : "Pending"}
-              </div>
-
-              <Link
-                to={"/items/" + currentTutorial._id}
-                className="badge badge-warning"
-              >
-                Edit
-              </Link>
-            </div>
-          ) : (
-            <div>
-              <br />
-              <p>Please click on an Item...</p>
-            </div>
-          )}
         </div>
       </div>
     );
