@@ -8,6 +8,7 @@ export default class ItemDialogue extends Component{
     this.getItem = this.getItem.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.saveItem = this.saveItem.bind(this);
+    this.populateForm = this.populateForm.bind(this);
     this.state = {
       activeItem : undefined,
       title : "",
@@ -26,8 +27,8 @@ export default class ItemDialogue extends Component{
     })
   }
 
-  populateForm(itemId){
-    this.getItem(itemId);
+  populateForm(){
+    this.getItem(this.props.itemId);
   }
 
   getItem(id) {
@@ -58,12 +59,27 @@ export default class ItemDialogue extends Component{
     })
   }
 
+  deleteItem(){
+    console.info('Item Deleted')
+    ItemService.delete(this.props.itemId)
+  }
+
+  updateItem(){
+    console.info('Item Updated')
+    ItemService.update({
+      id : this.state.itemId,
+      title : this.state.title,
+      description : this.state.description
+    })
+  }
+
     render(){
         //item dialogue goes here
         return(
             <Modal 
             show={this.props.show} 
             onHide={this.props.handleClose}
+            onEnter={this.populateForm}
             centered>
         <Modal.Header closeButton>
           <Modal.Title>Add Item</Modal.Title>
@@ -96,12 +112,27 @@ export default class ItemDialogue extends Component{
           </div>
           </Modal.Body>
         <Modal.Footer>
-          <button onClick={() => {this.props.handleClose();}} className="m-3 btn btn-sm btn-outline-danger">
+          <button onClick={() => {this.props.handleClose();}} className="m-3 btn btn-sm btn-light">
             Close
           </button>
-          <button onClick={() => {this.saveItem(); this.props.loadList(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-primary">
+         {
+         this.props.itemId === ""?(
+         <div>
+         <button onClick={() => {this.saveItem(); this.props.loadList(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-primary">
             Save
           </button>
+          </div>) : (
+          <div>
+            <button onClick={() => {this.updateItem(); this.props.loadList(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-secondary">
+              Update
+            </button>
+            <button onClick={() => {this.deleteItem(); this.props.loadList(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-danger">
+              Delete
+            </button>
+          </div>
+          )
+          }
+          
         </Modal.Footer>
       </Modal>
         )

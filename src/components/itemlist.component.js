@@ -45,7 +45,7 @@ export default class ItemList extends Component {
     }
 
     showNewItemDialogue = () => {
-      this.setState({ showItem: true , activeItemId: undefined});
+      this.setState({ showItem: true , activeItemId: ""});
     };
 
     showEditItemDialogue = (itemID) => {
