@@ -1,6 +1,7 @@
 import http from "../http-common";
+import authHeader from './auth.header';
 
-class TutorialDataService {
+class ItemService {
     getAll() {
         return http.get("/");
     }
@@ -30,4 +31,4 @@ class TutorialDataService {
     }
 }
 
-export default new TutorialDataService();
+export default new ItemService();
