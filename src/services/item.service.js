@@ -1,33 +1,32 @@
-import http from "../http-common";
-import authHeader from './auth.header';
+import { itemAxios } from '../http-common';
 
 class ItemService {
     getAll() {
-        return http.get("/");
+        return itemAxios.get("/");
     }
 
     get(id) {
-        return http.get(`/${id}`);
+        return itemAxios.get(`/${id}`);
     }
 
-    create(data) {
-        return http.post("/", data);
+    create(data, callBack) {
+        return itemAxios.post("/", data).then(callBack);
     }
 
-    update(data) {
-        return http.put("/", data);
+    update(data, callBack) {
+        return itemAxios.put("/", data).then(callBack);
     }
 
-    delete(id) {
-        return http.delete(`/${id}`);
+    delete(id, callBack) {
+        return itemAxios.delete(`/${id}`).then(callBack);
     }
 
     deleteAll() {
-        return http.delete(`/`);
+        return itemAxios.delete(`/`);
     }
 
     findByTitle(title) {
-        return http.get(`/?title=${title}`);
+        return itemAxios.get(`/?title=${title}`);
     }
 }
 
