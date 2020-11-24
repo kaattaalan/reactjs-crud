@@ -28,7 +28,7 @@ export default class ItemDialogue extends Component {
   }
 
   populateForm() {
-    this.getItem(this.props.itemId);
+    this.props.itemId ? this.getItem(this.props.itemId) : this.fillState(undefined)
   }
 
   getItem(id) {
@@ -38,7 +38,8 @@ export default class ItemDialogue extends Component {
         console.info(response.data);
       })
       .catch(e => {
-        window.location.reload();
+        //TODO: In case of token expiry/missing reload to go back to login page. NEEDS more checks
+        this.props.logout();
         console.info(e);
       });
   }

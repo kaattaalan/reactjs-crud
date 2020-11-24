@@ -41,7 +41,7 @@ class App extends Component {
         <Navbar currentuser={this.state.currentUser} logout={this.logout} />
         {this.state.currentUser ? (
           <div>
-            <ItemList />
+            <ItemList logout={this.logout} />
           </div>
         ) : (
           <Login />

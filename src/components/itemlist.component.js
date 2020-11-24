@@ -80,7 +80,8 @@ export default class ItemList extends Component {
           <ItemDialogue show={this.state.showItem}
             handleClose={this.hideItemDialogue}
             itemId={this.state.activeItemId}
-            loadList={this.getItemList} />
+            loadList={this.getItemList}
+            logout={this.props.logout} />
           <button
             className="m-3 btn btn-sm btn-outline-success"
             onClick={() => { this.showNewItemDialogue(); }}
