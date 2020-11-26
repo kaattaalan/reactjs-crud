@@ -9,6 +9,7 @@ export default class ItemList extends Component {
     this.getItemList = this.getItemList.bind(this);
     this.removeAllItems = this.removeAllItems.bind(this);
     this.showEditItemDialogue = this.showEditItemDialogue.bind(this);
+    this.handleAPIError = this.handleAPIError.bind(this);
     this.state = {
       items: []
     };
@@ -19,6 +20,13 @@ export default class ItemList extends Component {
     this.getItemList();
   }
 
+  //checks for 401 error and perform logout
+  handleAPIError(error) {
+    if (401 === error.response.status) {
+      this.props.logout();
+    }
+  }
+
   //fetch list from API
   getItemList() {
     ItemService.getAll()
@@ -27,21 +35,18 @@ export default class ItemList extends Component {
           items: response.data
         });
         console.info(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+      }, error => { this.handleAPIError(error) })
   }
   //remove All items
   removeAllItems() {
     ItemService.deleteAll()
-      .then(response => {
-        console.info(response.data);
-        this.getItemList();
-      })
-      .catch(e => {
-        console.log(e);
-      });
+      .then(
+        response => {
+          console.info(response.data);
+          this.getItemList();
+        },
+        error => { this.handleAPIError(error) }
+      )
   }
 
   showNewItemDialogue = () => {
@@ -81,7 +86,7 @@ export default class ItemList extends Component {
             handleClose={this.hideItemDialogue}
             itemId={this.state.activeItemId}
             loadList={this.getItemList}
-            logout={this.props.logout} />
+            logout={this.handleAPIError} />
           <button
             className="m-3 btn btn-sm btn-outline-success"
             onClick={() => { this.showNewItemDialogue(); }}

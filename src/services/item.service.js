@@ -9,16 +9,16 @@ class ItemService {
         return itemAxios.get(`/${id}`);
     }
 
-    create(data, callBack) {
-        return itemAxios.post("/", data).then(callBack);
+    create(data) {
+        return itemAxios.post("/", data);
     }
 
-    update(data, callBack) {
-        return itemAxios.put("/", data).then(callBack);
+    update(data,) {
+        return itemAxios.put("/", data);
     }
 
-    delete(id, callBack) {
-        return itemAxios.delete(`/${id}`).then(callBack);
+    delete(id) {
+        return itemAxios.delete(`/${id}`);
     }
 
     deleteAll() {
