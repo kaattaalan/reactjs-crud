@@ -11,13 +11,13 @@ export default class navbar extends Component {
                     </div>
                     {(this.props.currentuser) ? (
                         <div className="navbar-nav ml-auto">
-                            <li className="nav-item">
+                            <li className="nav-item px-2">
                                 <div className="navbar-text" >
                                     {this.props.currentuser.name}
                                 </div>
                             </li>
-                            <li className="nav-item">
-                                <div onClick={this.props.logout} className="nav-link">
+                            <li className="nav-item px-2">
+                                <div onClick={this.props.logout} className="btn btn-danger my-2 my-sm-0">
                                     Logout
                             </div>
                             </li>

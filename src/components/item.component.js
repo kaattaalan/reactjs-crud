@@ -36,12 +36,9 @@ export default class ItemDialogue extends Component {
       .then(response => {
         this.fillState(response)
         console.info(response.data);
+      }, error => {
+        this.props.logout(error)
       })
-      .catch(e => {
-        //TODO: In case of token expiry/missing reload to go back to login page. NEEDS more checks
-        this.props.logout();
-        console.info(e);
-      });
   }
 
   //single handler for all onChange of input fields
@@ -53,26 +50,44 @@ export default class ItemDialogue extends Component {
     });
   }
 
-  saveItem(callBack) {
+  saveItem() {
     console.info('Item Saved')
     ItemService.create({
       title: this.state.title,
       description: this.state.description
-    }, callBack)
+    }).then(
+      response => {
+        this.props.loadList();
+      },
+      error => {
+        this.props.logout(error)
+      })
   }
 
-  deleteItem(callBack) {
+  deleteItem() {
     console.info('Item Deleted')
-    ItemService.delete(this.props.itemId, callBack)
+    ItemService.delete(this.props.itemId).then(
+      response => {
+        this.props.loadList();
+      },
+      error => {
+        this.props.logout(error)
+      })
   }
 
-  updateItem(callBack) {
+  updateItem() {
     console.info('Item Updated')
     ItemService.update({
       id: this.state.itemId,
       title: this.state.title,
       description: this.state.description
-    }, callBack)
+    }).then(
+      response => {
+        this.props.loadList();
+      },
+      error => {
+        this.props.logout(error)
+      })
   }
 
   render() {
@@ -120,15 +135,15 @@ export default class ItemDialogue extends Component {
           {
             !this.props.itemId ? (
               <div>
-                <button onClick={() => { this.saveItem(this.props.loadList); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-primary">
+                <button onClick={() => { this.saveItem(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-primary">
                   Save
           </button>
               </div>) : (
                 <div>
-                  <button onClick={() => { this.updateItem(this.props.loadList); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-secondary">
+                  <button onClick={() => { this.updateItem(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-secondary">
                     Update
             </button>
-                  <button onClick={() => { this.deleteItem(this.props.loadList); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-danger">
+                  <button onClick={() => { this.deleteItem(); this.props.handleClose(); }} className="m-3 btn btn-sm btn-outline-danger">
                     Delete
             </button>
                 </div>
