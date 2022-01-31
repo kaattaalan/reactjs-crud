@@ -10,14 +10,31 @@ export default class ItemList extends Component {
     this.removeAllItems = this.removeAllItems.bind(this);
     this.showEditItemDialogue = this.showEditItemDialogue.bind(this);
     this.handleAPIError = this.handleAPIError.bind(this);
+    this.populateList = this.populateList.bind(this);
     this.state = {
-      items: []
+      items: [],
+      query: this.props.query
     };
   }
 
   //will fetch the list of items after the component has been loaded
   componentDidMount() {
-    this.getItemList();
+    this.getItemList(this.props.query);
+  }
+
+  //refresh list when query is changed
+  componentDidUpdate(prevProps) {
+    if (this.props.query !== prevProps.query) {
+     this.getItemList(this.props.query);
+    }
+  }
+
+  //populates the list
+  populateList(response){
+    this.setState({
+      items: response.data
+    });
+  
   }
 
   //checks for 401 error and perform logout
@@ -28,14 +45,12 @@ export default class ItemList extends Component {
   }
 
   //fetch list from API
-  getItemList() {
-    ItemService.getAll()
-      .then(response => {
-        this.setState({
-          items: response.data
-        });
-        console.info(response.data);
-      }, error => { this.handleAPIError(error) })
+  getItemList(query) {
+    if(query === ''){
+      ItemService.getAll().then(this.populateList, this.handleAPIError);
+    }else{
+      ItemService.findByTitle(query).then(this.populateList, this.handleAPIError);
+    }
   }
   //remove All items
   removeAllItems() {
@@ -67,9 +82,16 @@ export default class ItemList extends Component {
 
     return (
       <div className="list row">
-        <div className="col-md-6">
-          <h4>Item List</h4>
-
+        <div className="col-md-12">
+          <div className="row">
+            <h4 className="col-md-6">Item List</h4>
+            <button
+              className="ml-auto m-3 btn btn-sm btn-outline-success"
+              onClick={() => { this.showNewItemDialogue(); }}
+            >
+              New Item
+            </button>
+          </div>
           <ul className="list-group">
             {items &&
               items.map((item, index) => (
@@ -87,18 +109,14 @@ export default class ItemList extends Component {
             itemId={this.state.activeItemId}
             loadList={this.getItemList}
             logout={this.handleAPIError} />
-          <button
-            className="m-3 btn btn-sm btn-outline-success"
-            onClick={() => { this.showNewItemDialogue(); }}
-          >
-            Add
-          </button>
-          <button
-            className="m-3 btn btn-sm btn-danger"
-            onClick={this.removeAllItems}
-          >
-            Remove All
-          </button>
+          <div className="row">  
+            <button
+              className="ml-auto m-3 btn btn-sm btn-danger"
+              onClick={this.removeAllItems}
+            >
+              Remove All
+            </button>
+          </div>
         </div>
       </div>
     );

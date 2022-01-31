@@ -11,6 +11,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.logout = this.logout.bind(this);
+    this.showItemList = this.showItemList.bind(this);
 
     this.state = {
       currentUser: undefined,
@@ -35,14 +36,23 @@ class App extends Component {
     window.location.reload();
   }
 
+  showItemList(query){
+      this.setState({
+        showItem: true,
+        query: query
+      });
+  }
+
   render() {
     return (
       <div>
-        <Navbar currentuser={this.state.currentUser} logout={this.logout} />
+        <Navbar currentuser={this.state.currentUser} showItemList={this.showItemList} logout={this.logout} />
         {this.state.currentUser ? (
-          <div>
-            <ItemList logout={this.logout} />
-          </div>
+          this.state.showItem ? (
+            <div>
+              <ItemList logout={this.logout} query={this.state.query} />
+            </div>
+            ):(<div className="text-center" >Search For List</div>)
         ) : (
           <Login />
         )}

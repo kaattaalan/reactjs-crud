@@ -26,7 +26,7 @@ class ItemService {
     }
 
     findByTitle(title) {
-        return itemAxios.get(`/?title=${title}`);
+        return itemAxios.get(`?title=${title}`);
     }
 }
 

@@ -19,7 +19,7 @@ export default class ItemDialogue extends Component {
 
   //single method to enable both set and reset functions.
   fillState(response) {
-    this.setState({
+    this.setState({ 
       activeItem: response && response.data ? response.data : undefined,
       itemId: response && response.data && response.data.id ? response.data.id : "",
       title: response && response.data && response.data.title ? response.data.title : "",
