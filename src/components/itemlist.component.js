@@ -46,7 +46,10 @@ export default class ItemList extends Component {
 
   //fetch list from API
   getItemList(query) {
-    if(query === ''){
+    if(query === undefined){
+      query = this.props.query;
+    }
+    if(query === '' ){
       ItemService.getAll().then(this.populateList, this.handleAPIError);
     }else{
       ItemService.findByTitle(query).then(this.populateList, this.handleAPIError);
@@ -57,7 +60,6 @@ export default class ItemList extends Component {
     ItemService.deleteAll()
       .then(
         response => {
-          console.info(response.data);
           this.getItemList();
         },
         error => { this.handleAPIError(error) }
