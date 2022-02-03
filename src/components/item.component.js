@@ -19,7 +19,7 @@ export default class ItemDialogue extends Component {
 
   //single method to enable both set and reset functions.
   fillState(response) {
-    this.setState({
+    this.setState({ 
       activeItem: response && response.data ? response.data : undefined,
       itemId: response && response.data && response.data.id ? response.data.id : "",
       title: response && response.data && response.data.title ? response.data.title : "",
@@ -35,7 +35,6 @@ export default class ItemDialogue extends Component {
     ItemService.get(id)
       .then(response => {
         this.fillState(response)
-        console.info(response.data);
       }, error => {
         this.props.logout(error)
       })
@@ -51,7 +50,6 @@ export default class ItemDialogue extends Component {
   }
 
   saveItem() {
-    console.info('Item Saved')
     ItemService.create({
       title: this.state.title,
       description: this.state.description
@@ -65,7 +63,6 @@ export default class ItemDialogue extends Component {
   }
 
   deleteItem() {
-    console.info('Item Deleted')
     ItemService.delete(this.props.itemId).then(
       response => {
         this.props.loadList();
@@ -76,7 +73,6 @@ export default class ItemDialogue extends Component {
   }
 
   updateItem() {
-    console.info('Item Updated')
     ItemService.update({
       id: this.state.itemId,
       title: this.state.title,
