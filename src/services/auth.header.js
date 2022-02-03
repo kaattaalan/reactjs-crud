@@ -4,7 +4,7 @@ export default function authHeader() {
     if (userData && userData.token) {
         // for Node.js Express back-end
         return {
-            'x-access-token': userData.token,
+            'Authorization': 'Bearer ' + userData.token,
             "Content-type": "application/json"
         };
     } else {

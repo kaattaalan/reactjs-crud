@@ -3,13 +3,13 @@ import { userAxios } from '../http-common';
 class AuthService {
     login(email, password) {
         return userAxios
-            .post('/authenticate', {
+            .post('/signin', {
                 email,
                 password
             })
             .then(response => {
-                if (response.data.data.token) {
-                    localStorage.setItem("user", JSON.stringify(response.data.data));
+                if (response.data.accessToken) {
+                    localStorage.setItem("user", JSON.stringify(response.data));
                 }
                 return response.data;
             });
@@ -20,7 +20,7 @@ class AuthService {
     }
 
     register(name, email, password) {
-        return userAxios.post('/register', {
+        return userAxios.post('/signup', {
             name,
             email,
             password

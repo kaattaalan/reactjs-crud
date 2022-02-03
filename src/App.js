@@ -23,7 +23,7 @@ class App extends Component {
     console.info(user);
     if (user) {
       this.setState({
-        currentUser: user.user,
+        currentUser: user.username,
       });
     }
   }
