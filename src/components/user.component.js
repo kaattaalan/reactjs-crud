@@ -10,13 +10,16 @@ export default class user extends Component {
                 show={this.props.show}
                 onHide={this.props.handleClose}
                 >
-                    <div>
+                    <div className="">
                         Account
-                    </div>
                     <hr/>
                     <div  className="">
                         <div className="">
-                            {this.props.userName}
+                            {this.props.user.username}
+                        </div>
+                        <hr/>
+                        <div className="">
+                            {this.props.user.email}
                         </div>
                         <hr/>
                         <div className="">
@@ -24,6 +27,7 @@ export default class user extends Component {
                                 Logout
                         </div>
                         </div>
+                    </div>
                     </div>
             </Modal>
         )

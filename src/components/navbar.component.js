@@ -62,7 +62,7 @@ export default class navbar extends Component {
                             <div className="">
                             <UserCard className="" show={this.state.showUser}
                                 handleClose={this.hideUserdetails}
-                                userName={this.props.currentuser.name}
+                                user={this.props.currentuser}
                                 logout={this.props.logout} />
                             </div>
                         </div>

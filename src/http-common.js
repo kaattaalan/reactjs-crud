@@ -3,7 +3,7 @@ import authHeader from './services/auth.header'
 
 const BASE_URL = "http://localhost:8080"
 const itemAxios = axios.create({
-    baseURL: BASE_URL + "/items",
+    baseURL: BASE_URL + "/api/item",
     headers: authHeader()
 });
 

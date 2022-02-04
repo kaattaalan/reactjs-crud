@@ -83,6 +83,7 @@ export default class ItemList extends Component {
     const { items } = this.state;
 
     return (
+      <div className="">
       <div className="list row">
         <div className="col-md-12">
           <div className="row">
@@ -120,6 +121,7 @@ export default class ItemList extends Component {
             </button>
           </div>
         </div>
+      </div>
       </div>
     );
   }
