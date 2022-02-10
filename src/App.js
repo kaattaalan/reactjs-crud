@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-import ItemList from "./components/itemlist.component";
+import ItemView from "./components/itemview.component";
 import Login from "./components/login.component";
 import AuthService from "./services/auth.service";
 import Navbar from "./components/navbar.component";
@@ -36,11 +36,10 @@ class App extends Component {
     window.location.reload();
   }
 
-  showItemList(query){
-      this.setState({
-        showItem: true,
-        query: query
-      });
+  showItemList(query) {
+    this.setState({
+      query: query
+    });
   }
 
   render() {
@@ -48,11 +47,9 @@ class App extends Component {
       <div>
         <Navbar currentuser={this.state.currentUser} showItemList={this.showItemList} logout={this.logout} />
         {this.state.currentUser ? (
-          this.state.showItem ? (
-            <div>
-              <ItemList logout={this.logout} query={this.state.query} />
-            </div>
-            ):(<div className="text-center" >Search For List</div>)
+          <div>
+            <ItemView logout={this.logout} query={this.state.query} user={this.state.currentUser} />
+          </div>
         ) : (
           <Login />
         )}

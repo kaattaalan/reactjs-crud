@@ -1,35 +1,29 @@
 import React, { Component } from "react";
-import UserCard from './user.component'
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import Search from './search.component'
 
 export default class navbar extends Component {
     constructor(props) {
         super(props);
         this.showUserdetails = this.showUserdetails.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.searchItem = this.searchItem.bind(this);
         this.state = {
-            query : ""
+            query: ""
         };
     }
 
     showUserdetails = () => {
         this.setState({ showUser: true });
-      };
+    };
 
     hideUserdetails = () => {
         this.setState({ showUser: false });
-      };
-    
-    handleChange(evt) {
-      const value = evt.target.type === "checkbox" ? evt.target.checked : evt.target.value;
-      this.setState({
-        ...this.state,
-        [evt.target.name]: value
-      });
-    }
+    };
 
-    searchItem(){
-        this.props.showItemList(this.state.query);
+    //will be passed down to the search component for execution
+    searchItem(query) {
+        this.props.showItemList(query);
     }
 
     render() {
@@ -37,40 +31,28 @@ export default class navbar extends Component {
             <div>
                 <nav className="navbar navbar-expand navbar-dark bg-dark">
                     <div className="navbar-brand">
-                        React - CRUD
+                        Item - CRUD
                     </div>
                     {(this.props.currentuser) ? (
-                       <div className="col-md-8 ml-auto">
-                        <div className="navbar-nav ml-auto">
-                            <input
-                                type="text"
-                                className="form-control col-md-4 "
-                                id="query"
-                                value={this.state.query}
-                                onChange={this.handleChange}
-                                name="query"
-                            />
-                            <div onClick={this.searchItem}  className="btn btn-danger my-2 my-sm-0">
-                            🔍
-                            </div>
-                            <br/>
-                            <div className="ml-auto my-2 my-sm-0">
-                            <div onClick={this.showUserdetails} className="btn btn-danger">
-                            😊
-                            </div>
-                            </div>
-                            <div className="">
-                            <UserCard className="" show={this.state.showUser}
-                                handleClose={this.hideUserdetails}
-                                user={this.props.currentuser}
-                                logout={this.props.logout} />
+                        <div className="collapse navbar-collapse">
+                            <ul className="navbar-nav mr-auto">
+                                <Search className="nav-item active" searchItem={this.searchItem} />
+                            </ul>
+                            <div className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {this.props.currentuser.username}
+                                </a>
+                                <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a className="dropdown-item" href="#">{this.props.currentuser.email}</a>
+                                    <div className="dropdown-divider"></div>
+                                    <a className="dropdown-item" href="#" onClick={this.props.logout}>Logout</a>
+                                </div>
                             </div>
                         </div>
-                        </div> 
                     ) : null
                     }
                 </nav>
-            </div>
+            </div >
         )
     }
 
