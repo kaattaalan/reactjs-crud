@@ -1,5 +1,6 @@
 import { Component } from "react";
-import ItemService from '../services/item.service'
+import ItemService from '../services/item.service';
+import { timeSince } from '../util/utils';
 
 export default class ItemDialogue extends Component {
   constructor(props) {
@@ -19,12 +20,16 @@ export default class ItemDialogue extends Component {
 
   //single method to enable both set and reset functions.
   fillState(response) {
+    //enable edit mode on input fields
     if (response === undefined) this.editItem();
+    //set the state with values for editable
     this.setState({
       activeItem: response && response.data ? response.data : undefined,
       itemId: response && response.data && response.data.id ? response.data.id : "",
       title: response && response.data && response.data.title ? response.data.title : "",
-      description: response && response.data && response.data.description ? response.data.description : ""
+      description: response && response.data && response.data.description ? response.data.description : "",
+      createdDate: response && response.data && response.data.createdDate ? response.data.createdDate : undefined,
+      itemUsername: response && response.data && response.data.userInfo && response.data.userInfo.username ? response.data.userInfo.username : ""
     })
   }
 
@@ -116,8 +121,8 @@ export default class ItemDialogue extends Component {
                     </div>
                   </div>
                   <div className="text-muted small ml-3">
-                    <div>Posted By <strong>Killer Thommi</strong></div>
-                    <div className="text-muted small">13 days ago</div>
+                    <div>Posted By <strong>{this.state.itemUsername}</strong></div>
+                    <div className="text-muted small">{this.state.createdDate ? timeSince(this.state.createdDate) : ""}</div>
                   </div>
                 </div>
               </div>
@@ -141,23 +146,23 @@ export default class ItemDialogue extends Component {
                 <div className="px-4 pt-3 row">
                   {
                     !this.props.itemId ? (
-                      <button type="button" onClick={this.saveItem} className="btn btn-success"><i className="ion ion-md-create">
+                      <button type="button" onClick={this.saveItem} className="btn btn-success btn-sm"><i className="ion ion-md-create">
                       </i> Save
                       </button>) : (
                       this.state.editItem ? (
                         <div>
-                          <button type="button" onClick={() => { this.updateItem(); }} className="btn btn-success"><i className="ion ion-md-create">
+                          <button type="button" onClick={() => { this.updateItem(); }} className="btn btn-outline-success btn-sm"><i className="ion ion-md-create">
                           </i> Update
                           </button>
-                          <button type="button" onClick={() => { this.deleteItem(); }} className="btn btn-danger"><i className="ion ion-md-create">
+                          <button type="button" onClick={() => { this.deleteItem(); }} className="btn btn-outline-danger btn-sm"><i className="ion ion-md-create">
                           </i> Delete
                           </button>
                         </div>
                       ) : (
-                        <a className="btn" onClick={() => { this.editItem(); }} href="#"><i className="icon-edit"></i> Edit</a>
+                        <button type="button" onClick={() => { this.editItem(); }} className="btn btn-link">Edit</button>
                       ))
                   }
-                  <button type="button" onClick={() => { this.props.handleClose(); }} className="btn btn-outline-secondary"><i className="ion ion-md-create">
+                  <button type="button" onClick={() => { this.props.handleClose(); }} className="btn btn-outline-secondary btn-sm"><i className="ion ion-md-create">
                   </i> Close
                   </button>
                 </div>
