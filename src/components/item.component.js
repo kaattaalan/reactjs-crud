@@ -111,7 +111,7 @@ export default class ItemDialogue extends Component {
   }
 
   handleAPIError(error) {
-    if (401 === error.response.status) {
+    if (403 === error.response.status) {
       this.disableEdit();
     }
   }
@@ -167,7 +167,7 @@ export default class ItemDialogue extends Component {
                         <div>
                           {!this.state.isAllowed ? (
                             <div>
-                              < button type="button" className="btn btn-link disabled">Unauthorized</button>
+                              < button type="button" className="btn btn-link disabled">Forbidden</button>
                             </div>
                           ) : (
                             <div>
