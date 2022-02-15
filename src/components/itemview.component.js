@@ -27,6 +27,12 @@ export default class ItemView extends Component {
         this.setState({ showItem: true, activeItemId: undefined })
     };
 
+    componentDidUpdate(prevProps) {
+        if (this.props.query !== prevProps.query) {
+            this.setState({ showItem: false, activeItemId: undefined })
+        }
+    }
+
 
     render() {
         return (

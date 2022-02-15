@@ -14,7 +14,8 @@ export default class ItemDialogue extends Component {
       title: "",
       description: "",
       itemId: "",
-      editItem: false
+      editItem: false,
+      isAllowed: true
     }
   }
 
@@ -63,6 +64,13 @@ export default class ItemDialogue extends Component {
     });
   }
 
+  disableEdit() {
+    this.setState({
+      ...this.state,
+      isAllowed: false
+    });
+  }
+
   saveItem() {
     ItemService.create({
       title: this.state.title,
@@ -83,7 +91,7 @@ export default class ItemDialogue extends Component {
         this.props.handleClose();
       },
       error => {
-        this.props.logout(error)
+        this.handleAPIError(error);
       })
   }
 
@@ -98,8 +106,14 @@ export default class ItemDialogue extends Component {
         this.props.handleClose();
       },
       error => {
-        this.props.logout(error)
+        this.handleAPIError(error);
       })
+  }
+
+  handleAPIError(error) {
+    if (401 === error.response.status) {
+      this.disableEdit();
+    }
   }
 
   render() {
@@ -151,15 +165,24 @@ export default class ItemDialogue extends Component {
                       </button>) : (
                       this.state.editItem ? (
                         <div>
-                          <button type="button" onClick={() => { this.updateItem(); }} className="btn btn-outline-success btn-sm"><i className="ion ion-md-create">
-                          </i> Update
-                          </button>
-                          <button type="button" onClick={() => { this.deleteItem(); }} className="btn btn-outline-danger btn-sm"><i className="ion ion-md-create">
-                          </i> Delete
-                          </button>
+                          {!this.state.isAllowed ? (
+                            <div>
+                              < button type="button" className="btn btn-link disabled">Unauthorized</button>
+                            </div>
+                          ) : (
+                            <div>
+                              <button type="button" onClick={() => { this.updateItem(); }} className="btn btn-outline-success btn-sm"><i className="ion ion-md-create">
+                              </i> Update
+                              </button>
+                              <button type="button" onClick={() => { this.deleteItem(); }} className="btn btn-outline-danger btn-sm"><i className="ion ion-md-create">
+                              </i> Delete
+                              </button>
+                            </div>
+                          )
+                          }
                         </div>
                       ) : (
-                        <button type="button" onClick={() => { this.editItem(); }} className="btn btn-link">Edit</button>
+                        < button type="button" onClick={() => { this.editItem(); }} className="btn btn-link">Edit</button>
                       ))
                   }
                   <button type="button" onClick={() => { this.props.handleClose(); }} className="btn btn-outline-secondary btn-sm"><i className="ion ion-md-create">
@@ -169,8 +192,8 @@ export default class ItemDialogue extends Component {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
     )
   }
 
