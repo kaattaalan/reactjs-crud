@@ -1,5 +1,6 @@
 import { Component } from "react";
 import ItemService from '../services/item.service';
+import VoteComponent from './vote.component';
 import { timeSince } from '../util/utils';
 
 export default class ItemDialogue extends Component {
@@ -30,7 +31,8 @@ export default class ItemDialogue extends Component {
       title: response && response.data && response.data.title ? response.data.title : "",
       description: response && response.data && response.data.description ? response.data.description : "",
       createdDate: response && response.data && response.data.createdDate ? response.data.createdDate : undefined,
-      itemUsername: response && response.data && response.data.userInfo && response.data.userInfo.username ? response.data.userInfo.username : ""
+      itemUsername: response && response.data && response.data.userInfo && response.data.userInfo.username ? response.data.userInfo.username : "",
+      itemViews: response && response.data && response.data.metaData ? response.data.metaData.viewCount : ""
     })
   }
 
@@ -42,7 +44,7 @@ export default class ItemDialogue extends Component {
   getItem(id) {
     ItemService.get(id)
       .then(response => {
-        this.fillState(response)
+        this.fillState(response);
       }, error => {
         this.props.logout(error)
       })
@@ -130,7 +132,7 @@ export default class ItemDialogue extends Component {
                       {this.state.editItem ? (
                         <input type="text" className="form-control" required value={this.state.title} onChange={this.handleChange} name="title" />
                       ) : (
-                        <strong> {this.state.title} </strong>
+                        <strong>{this.state.title}</strong>
                       )}
                     </div>
                   </div>
@@ -149,12 +151,19 @@ export default class ItemDialogue extends Component {
               </div>
               <div className="card-footer d-flex flex-wrap justify-content-between align-items-center px-0 pt-0 pb-3">
                 <div className="px-4 pt-3">
-                  <a href="#" className="text-muted d-inline-flex align-items-center align-middle" data-abc="true">
-                    <i className="fa fa-heart text-danger"></i>&nbsp;
-                    <span className="align-middle">445</span> </a>
+                  <div className="d-inline-flex text-muted  align-items-center align-middle">
+                    {this.state.activeItem ? (
+                      <div>
+                        <VoteComponent itemId={this.state.itemId} upVote={ItemService.upVote} downVote={ItemService.downVote} />
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+
+                  </div>
                   <span className="text-muted d-inline-flex align-items-center align-middle ml-4">
                     <i className="fa fa-eye text-muted fsize-3"></i>&nbsp;
-                    <span className="align-middle">14532</span>
+                    <span className="align-middle small">{this.state.itemViews} views</span>
                   </span>
                 </div>
                 <div className="px-4 pt-3 row">

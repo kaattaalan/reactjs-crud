@@ -12,15 +12,15 @@ export const timeSince = function (date) {
         return parseInt(secondsPast / 60) + ' mins';
     }
     if (secondsPast <= 86400) {
-        return parseInt(secondsPast / 3600) + ' hs';
+        return parseInt(secondsPast / 3600) + ' hours';
     }
     if (secondsPast <= 2628000) {
-        return parseInt(secondsPast / 86400) + ' ds';
+        return parseInt(secondsPast / 86400) + ' days';
     }
     if (secondsPast <= 31536000) {
-        return parseInt(secondsPast / 2628000) + ' mos';
+        return parseInt(secondsPast / 2628000) + ' mo.s';
     }
     if (secondsPast > 31536000) {
-        return parseInt(secondsPast / 31536000) + ' ys';
+        return parseInt(secondsPast / 31536000) + ' years';
     }
 }

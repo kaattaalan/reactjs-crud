@@ -13,7 +13,7 @@ class ItemService {
         return itemAxios.post("/", data);
     }
 
-    update(data,) {
+    update(data) {
         return itemAxios.put("/", data);
     }
 
@@ -27,6 +27,14 @@ class ItemService {
 
     findByTitle(title) {
         return itemAxios.get(`/search?title=${title}`);
+    }
+
+    upVote(id) {
+        return itemAxios.put(`/vote/${id}/UP`);
+    }
+
+    downVote(id) {
+        return itemAxios.put(`/vote/${id}/DOWN`);
     }
 }
 
