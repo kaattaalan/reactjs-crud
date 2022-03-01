@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import ItemList from "./itemlist.component";
 import ItemDialogue from './item.component'
+import CommentList from './commentlist.component'
 
 export default class ItemView extends Component {
 
@@ -37,7 +38,7 @@ export default class ItemView extends Component {
     render() {
         return (
             <div className="container">
-                <div className="col-xl">
+                <div className="col-md-12">
                     {!this.state.showItem ? (
                         <div>
                             <ItemList logout={this.props.logout} query={this.props.query} showItem={this.showEditItemDialogue} newItem={this.showNewItemDialogue} />
@@ -45,6 +46,7 @@ export default class ItemView extends Component {
                     ) : (
                         <div>
                             <ItemDialogue logout={this.props.logout} itemId={this.state.activeItemId} handleClose={this.hideItemDialogue} user={this.props.user} />
+                            <CommentList itemId={this.state.activeItemId} user={this.props.user} />
                         </div>
                     )}
                 </div>

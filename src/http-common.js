@@ -12,6 +12,16 @@ itemAxios.interceptors.request.use(function (config) {
     return config;
 });
 
+const commentAxios = axios.create({
+    baseURL: BASE_URL + "/api/comment",
+    headers: authHeader()
+});
+
+commentAxios.interceptors.request.use(function (config) {
+    config.headers = authHeader();
+    return config;
+});
+
 
 const userAxios = axios.create({
     baseURL: BASE_URL + "/api/auth",
@@ -21,4 +31,4 @@ const userAxios = axios.create({
 });
 
 
-export { itemAxios, userAxios };
+export { itemAxios, userAxios, commentAxios };
