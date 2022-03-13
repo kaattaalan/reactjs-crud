@@ -1,7 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Component } from "react";
 import ItemService from '../services/item.service';
 import VoteComponent from './vote.component';
-import { timeSince } from '../util/utils';
+import { timeSince, hasDeletePermission } from '../util/utils';
 
 export default class ItemDialogue extends Component {
   constructor(props) {
@@ -9,14 +10,14 @@ export default class ItemDialogue extends Component {
     this.getItem = this.getItem.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.saveItem = this.saveItem.bind(this);
+    this.handleClose = this.handleClose.bind(this);
     this.state = {
       user: this.props.user,
       activeItem: undefined,
       title: "",
       description: "",
       itemId: "",
-      editItem: false,
-      isAllowed: true
+      editItem: false
     }
   }
 
@@ -69,7 +70,7 @@ export default class ItemDialogue extends Component {
   disableEdit() {
     this.setState({
       ...this.state,
-      isAllowed: false
+      editItem: false
     });
   }
 
@@ -118,92 +119,60 @@ export default class ItemDialogue extends Component {
     }
   }
 
+  handleClose() {
+    if (this.state.editItem) {
+      this.disableEdit();
+    } else {
+      this.props.handleClose();
+    }
+  }
+
   render() {
     //item dialogue goes here
     return (
-      <div className="container-fluid mt-100">
-        <div className="row">
-          <div className="col-md-12">
-            <div className="card mb-4">
-              <div className="card-header">
-                <div className="media flex-wrap w-100 align-items-center">
-                  <div className="media-body ml-3">
-                    <div data-abc="true" >
-                      {this.state.editItem ? (
-                        <input type="text" className="form-control" required value={this.state.title} onChange={this.handleChange} name="title" />
-                      ) : (
-                        <strong>{this.state.title}</strong>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-muted small ml-3">
-                    <div>Posted By <strong>{this.state.itemUsername}</strong></div>
-                    <div className="text-muted small">{this.state.createdDate ? timeSince(this.state.createdDate) : ""}</div>
-                  </div>
-                </div>
-              </div>
-              <div className="card-body" >
-                {this.state.editItem ? (
-                  <textarea type="text" className="form-control" value={this.state.description} onChange={this.handleChange} name="description" />
-                ) : (
-                  <p> {this.state.description} </p>
-                )}
-              </div>
-              <div className="card-footer d-flex flex-wrap justify-content-between align-items-center px-0 pt-0 pb-3">
-                <div className="px-4 pt-3">
-                  <div className="d-inline-flex text-muted  align-items-center align-middle">
-                    {this.state.activeItem ? (
-                      <div>
-                        <VoteComponent itemId={this.state.itemId} upVote={ItemService.upVote} downVote={ItemService.downVote} />
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
-
-                  </div>
-                  <span className="text-muted d-inline-flex align-items-center align-middle ml-4">
-                    <i className="fa fa-eye text-muted fsize-3"></i>&nbsp;
-                    <span className="align-middle small">{this.state.itemViews} views</span>
-                  </span>
-                </div>
-                <div className="px-4 pt-3 row">
-                  {
-                    !this.props.itemId ? (
-                      <button type="button" onClick={this.saveItem} className="btn btn-success btn-sm"><i className="ion ion-md-create">
-                      </i> Save
-                      </button>) : (
-                      this.state.editItem ? (
-                        <div>
-                          {!this.state.isAllowed ? (
-                            <div>
-                              < button type="button" className="btn btn-link disabled">Forbidden</button>
-                            </div>
-                          ) : (
-                            <div>
-                              <button type="button" onClick={() => { this.updateItem(); }} className="btn btn-outline-success btn-sm"><i className="ion ion-md-create">
-                              </i> Update
-                              </button>
-                              <button type="button" onClick={() => { this.deleteItem(); }} className="btn btn-outline-danger btn-sm"><i className="ion ion-md-create">
-                              </i> Delete
-                              </button>
-                            </div>
-                          )
-                          }
-                        </div>
-                      ) : (
-                        < button type="button" onClick={() => { this.editItem(); }} className="btn btn-link">Edit</button>
-                      ))
-                  }
-                  <button type="button" onClick={() => { this.props.handleClose(); }} className="btn btn-outline-secondary btn-sm"><i className="ion ion-md-create">
-                  </i> Close
-                  </button>
-                </div>
-              </div>
+      <div className="container">
+        <div className="row title">
+          {this.state.editItem ? (
+            <input type="text" className="col-md-12" required value={this.state.title} onChange={this.handleChange} name="title" />
+          ) : (
+            <strong>{this.state.title}</strong>
+          )}
+        </div>
+        <div className="row description" >
+          {this.state.editItem ? (
+            <textarea type="text" className="" value={this.state.description} onChange={this.handleChange} name="description" />
+          ) : (
+            <p> {this.state.description} </p>
+          )}
+        </div>
+        <div className="row container col-md-12 small footer">
+          {this.state.activeItem ? (
+            <div>
+              {/*<VoteComponent itemId={this.state.itemId} upVote={ItemService.upVote} downVote={ItemService.downVote} />*/}
             </div>
+          ) : ("")}
+          <div className="row col-md-4">
+            &nbsp;
+            <div className="text-muted small">Posted By <strong>{this.state.itemUsername}&nbsp;</strong></div>
+            <div className="text-muted small">{this.state.createdDate ? timeSince(this.state.createdDate) + ' ago.' : ""}</div>
+            <span className="text-muted small">&nbsp; Viewed {this.state.itemViews} times</span>
           </div>
-        </div >
-      </div >
+          <div className="row ml-auto">
+            {!this.props.itemId ? (
+              <a href="#" className="text-success" onClick={this.saveItem}>&nbsp;Save</a>) : (
+              this.state.editItem ? (
+                <a href="#" className="text-success" onClick={() => { this.updateItem(); }}>&nbsp;Update</a>) : (
+                hasDeletePermission(this.props.user) ? (
+                  < div className="">
+                    <a href="#" onClick={() => { this.editItem(); }}>&nbsp;Edit</a>
+                    <a href="#" className="text-danger" onClick={() => { this.deleteItem(); }}>&nbsp;Delete</a>
+                  </div>) : ("")
+              ))}
+            <a href="#" className="text-muted" onClick={this.handleClose}>&nbsp;Close</a>
+          </div>
+        </div>
+        <hr />
+      </div>
     )
   }
-
 }
